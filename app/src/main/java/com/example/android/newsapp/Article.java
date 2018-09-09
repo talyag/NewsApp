@@ -17,8 +17,6 @@ public class Article {
     // Website URL of the article
     private String mUrl;
 
-    // TODO: Add image url to class
-
     /**
      * Constructs a new {@link Article} object.
      *

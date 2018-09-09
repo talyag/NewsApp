@@ -1,17 +1,23 @@
 package com.example.android.newsapp;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
 public class ArticleAdapter extends ArrayAdapter<Article> {
+
+    public static final String LOG_TAG = ArticleAdapter.class.getName();
+
+    private static final String DATE_SEPARATOR = "T";
 
     /**
      * @param context The current context. Used to inflate the layout file.
@@ -37,7 +43,7 @@ public class ArticleAdapter extends ArrayAdapter<Article> {
                     R.layout.article_list_item, parent, false);
         }
 
-        // Find the earthquake at the given position in the list of earthquakes
+        // Find the article at the given position
         Article currentArticle = getItem(position);
 
         /**
@@ -65,16 +71,58 @@ public class ArticleAdapter extends ArrayAdapter<Article> {
         sectionView.setText(currentArticle.getSectionName());
 
         /**
-         *  Get and set publication date
-         * */
-        // Find the TextView with view ID author_name
+         * Get and set publication date
+         * **/
+        String dateTime = new String(currentArticle.getPublicationDate());
+
+        String publicationDate;
+
+        if (dateTime.contains(DATE_SEPARATOR)) {
+            String[] parts = dateTime.split(DATE_SEPARATOR);
+            publicationDate = parts[0];
+
+        } else {
+            publicationDate = dateTime;
+        }
+
+        String formattedDate = formatDate(publicationDate);
+
+        // Find the TextView with view ID date
         TextView dateView = (TextView) listItemView.findViewById(R.id.date);
 
-        dateView.setText(currentArticle.getPublicationDate());
+        dateView.setText(formattedDate);
 
         // Return the list item view that is now showing the appropriate data
         return listItemView;
 
+    }
+
+    /**
+     * Convert date string from 2018-01-01 to Jan 1, 2018.
+     */
+    private String formatDate(String publicationDate) {
+
+        // Initialize date variable
+        Date date = null;
+
+        // Define current format pattern of publicationDate
+        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        try {
+
+            // Convert from String to date. If the format is incorrect, throw exception
+            date = inputFormat.parse(publicationDate);
+        } catch (ParseException e) {
+            Log.e(LOG_TAG, "failed to parse publication date");
+        }
+
+        // Define new format pattern
+        SimpleDateFormat outputFormat = new SimpleDateFormat("MMM d, yyyy");
+
+        // Convert date to new pattern
+        String formattedDate = outputFormat.format(date);
+
+        return formattedDate;
     }
 
 }

@@ -7,14 +7,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
 public final class QueryUtils {
-
-
-    private static final String SAMPLE_JSON_RESPONSE= "{\\\"response\\\":{\\\"status\\\":\\\"ok\\\",\\\"userTier\\\":\\\"developer\\\",\\\"total\\\":8697,\\\"startIndex\\\":1,\\\"pageSize\\\":10,\\\"currentPage\\\":1,\\\"pages\\\":870,\\\"orderBy\\\":\\\"newest\\\",\\\"results\\\":[{\\\"id\\\":\\\"games\\/2018\\/aug\\/17\\/video-game-loot-boxes-addictive-and-a-form-of-simulated-gambling-senate-inquiry-told\\\",\\\"type\\\":\\\"article\\\",\\\"sectionId\\\":\\\"games\\\",\\\"sectionName\\\":\\\"Games\\\",\\\"webPublicationDate\\\":\\\"2018-08-16T18:00:13Z\\\",\\\"webTitle\\\":\\\"Video game loot boxes addictive and a form of 'simulated gambling', Senate inquiry told\\\",\\\"webUrl\\\":\\\"https:\\/\\/www.theguardian.com\\/games\\/2018\\/aug\\/17\\/video-game-loot-boxes-addictive-and-a-form-of-simulated-gambling-senate-inquiry-told\\\",\\\"apiUrl\\\":\\\"https:\\/\\/content.guardianapis.com\\/games\\/2018\\/aug\\/17\\/video-game-loot-boxes-addictive-and-a-form-of-simulated-gambling-senate-inquiry-told\\\",\\\"fields\\\":{\\\"headline\\\":\\\"Video game loot boxes addictive and a form of 'simulated gambling', Senate inquiry told\\\",\\\"thumbnail\\\":\\\"https:\\/\\/media.guim.co.uk\\/8983de51adc72fd46e682a3e797e56ad3bfc5e37\\/30_0_927_556\\/500.jpg\\\"},\\\"tags\\\":[{\\\"id\\\":\\\"profile\\/patrick-lum\\\",\\\"type\\\":\\\"contributor\\\",\\\"webTitle\\\":\\\"Patrick Lum\\\",\\\"webUrl\\\":\\\"https:\\/\\/www.theguardian.com\\/profile\\/patrick-lum\\\",\\\"apiUrl\\\":\\\"https:\\/\\/content.guardianapis.com\\/profile\\/patrick-lum\\\",\\\"references\\\":[],\\\"bio\\\":\\\"<p>Patrick is a production assistant and occasional writer for Guardian Australia. Find him tweeting nonsense @jintor_au<\\/p>\\\",\\\"firstName\\\":\\\"Patrick\\\",\\\"lastName\\\":\\\"Lum\\\",\\\"twitterHandle\\\":\\\"jintor_au\\\"}],\\\"isHosted\\\":false,\\\"pillarId\\\":\\\"pillar\\/arts\\\",\\\"pillarName\\\":\\\"Arts\\\"},{\\\"id\\\":\\\"games\\/2018\\/aug\\/16\\/how-grand-theft-auto-created-a-virtual-underground-clubbing-scene\\\",\\\"type\\\":\\\"article\\\",\\\"sectionId\\\":\\\"games\\\",\\\"sectionName\\\":\\\"Games\\\",\\\"webPublicationDate\\\":\\\"2018-08-16T07:30:41Z\\\",\\\"webTitle\\\":\\\"How Grand Theft Auto created a virtual underground clubbing scene\\\",\\\"webUrl\\\":\\\"https:\\/\\/www.theguardian.com\\/games\\/2018\\/aug\\/16\\/how-grand-theft-auto-created-a-virtual-underground-clubbing-scene\\\",\\\"apiUrl\\\":\\\"https:\\/\\/content.guardianapis.com\\/games\\/2018\\/aug\\/16\\/how-grand-theft-auto-created-a-virtual-underground-clubbing-scene\\\",\\\"fields\\\":{\\\"headline\\\":\\\"How Grand Theft Auto created a virtual underground clubbing scene\\\",\\\"thumbnail\\\":\\\"https:\\/\\/media.guim.co.uk\\/8252b763469d9748800a905fc980cca6918366ce\\/529_310_2482_1489\\/500.jpg\\\"},\\\"tags\\\":[{\\\"id\\\":\\\"profile\\/sam-white\\\",\\\"type\\\":\\\"contributor\\\",\\\"webTitle\\\":\\\"Sam White\\\",\\\"webUrl\\\":\\\"https:\\/\\/www.theguardian.com\\/profile\\/sam-white\\\",\\\"apiUrl\\\":\\\"https:\\/\\/content.guardianapis.com\\/profile\\/sam-white\\\",\\\"references\\\":[],\\\"firstName\\\":\\\"white\\\",\\\"lastName\\\":\\\"sam\\\"}],\\\"isHosted\\\":false,\\\"pillarId\\\":\\\"pillar\\/arts\\\",\\\"pillarName\\\":\\\"Arts\\\"},{\\\"id\\\":\\\"games\\/2018\\/aug\\/15\\/phantom-doctrine-review-spy-game\\\",\\\"type\\\":\\\"article\\\",\\\"sectionId\\\":\\\"games\\\",\\\"sectionName\\\":\\\"Games\\\",\\\"webPublicationDate\\\":\\\"2018-08-15T09:30:14Z\\\",\\\"webTitle\\\":\\\"Phantom Doctrine review \\u2013 a vexing spy game for masochists\\\",\\\"webUrl\\\":\\\"https:\\/\\/www.theguardian.com\\/games\\/2018\\/aug\\/15\\/phantom-doctrine-review-spy-game\\\",\\\"apiUrl\\\":\\\"https:\\/\\/content.guardianapis.com\\/games\\/2018\\/aug\\/15\\/phantom-doctrine-review-spy-game\\\",\\\"fields\\\":{\\\"headline\\\":\\\"Phantom Doctrine review \\u2013 a vexing spy game for masochists\\\",\\\"thumbnail\\\":\\\"https:\\/\\/media.guim.co.uk\\/592ee25039a2a76edee67fe582d725285d6a6994\\/0_0_3600_2160\\/500.jpg\\\"},\\\"tags\\\":[{\\\"id\\\":\\\"profile\\/oliver-holmes\\\",\\\"type\\\":\\\"contributor\\\",\\\"webTitle\\\":\\\"Oliver Holmes\\\",\\\"webUrl\\\":\\\"https:\\/\\/www.theguardian.com\\/profile\\/oliver-holmes\\\",\\\"apiUrl\\\":\\\"https:\\/\\/content.guardianapis.com\\/profile\\/oliver-holmes\\\",\\\"references\\\":[],\\\"bio\\\":\\\"<p>Oliver Holmes is the Jerusalem correspondent for the Guardian. Previously based in Bangkok, he has reported across the Middle East and Asia. You can follow him on Twitter&nbsp;<a href=\\\\\\\"https:\\/\\/twitter.com\\/olireports?lang=en\\\\\\\">@olireports<\\/a><\\/p>\\\",\\\"bylineImageUrl\\\":\\\"https:\\/\\/uploads.guim.co.uk\\/2017\\/03\\/06\\/Oliver_Holmes.jpg\\\",\\\"firstName\\\":\\\"Oliver\\\",\\\"lastName\\\":\\\"Holmes\\\"}],\\\"isHosted\\\":false,\\\"pillarId\\\":\\\"pillar\\/arts\\\",\\\"pillarName\\\":\\\"Arts\\\"},{\\\"id\\\":\\\"games\\/2018\\/aug\\/13\\/red-dead-redemption-2-video-game-rockstar-games\\\",\\\"type\\\":\\\"article\\\",\\\"sectionId\\\":\\\"games\\\",\\\"sectionName\\\":\\\"Games\\\",\\\"webPublicationDate\\\":\\\"2018-08-13T11:45:29Z\\\",\\\"webTitle\\\":\\\"Red Dead Redemption 2 could be just the video game we need in 2018\\\",\\\"webUrl\\\":\\\"https:\\/\\/www.theguardian.com\\/games\\/2018\\/aug\\/13\\/red-dead-redemption-2-video-game-rockstar-games\\\",\\\"apiUrl\\\":\\\"https:\\/\\/content.guardianapis.com\\/games\\/2018\\/aug\\/13\\/red-dead-redemption-2-video-game-rockstar-games\\\",\\\"fields\\\":{\\\"headline\\\":\\\"Red Dead Redemption 2 could be just the video game we need in 2018\\\",\\\"thumbnail\\\":\\\"https:\\/\\/media.guim.co.uk\\/96e07bc3b46c31dd558b8abc87e795134a61afe9\\/0_0_1796_1078\\/500.png\\\"},\\\"tags\\\":[{\\\"id\\\":\\\"profile\\/stuart-heritage\\\",\\\"type\\\":\\\"contributor\\\",\\\"webTitle\\\":\\\"Stuart Heritage\\\",\\\"webUrl\\\":\\\"https:\\/\\/www.theguardian.com\\/profile\\/stuart-heritage\\\",\\\"apiUrl\\\":\\\"https:\\/\\/content.guardianapis.com\\/profile\\/stuart-heritage\\\",\\\"references\\\":[],\\\"bio\\\":\\\"<p>Stuart Heritage writes about film, TV and music for the Guardian<\\/p>\\\",\\\"bylineImageUrl\\\":\\\"https:\\/\\/uploads.guim.co.uk\\/2018\\/05\\/18\\/Stuart-Heritage.jpg\\\",\\\"bylineLargeImageUrl\\\":\\\"https:\\/\\/uploads.guim.co.uk\\/2018\\/05\\/18\\/Stuart_Heritage,_L.png\\\",\\\"firstName\\\":\\\"Stuart\\\",\\\"lastName\\\":\\\"Heritage\\\",\\\"twitterHandle\\\":\\\"stuheritage\\\"}],\\\"isHosted\\\":false,\\\"pillarId\\\":\\\"pillar\\/arts\\\",\\\"pillarName\\\":\\\"Arts\\\"},{\\\"id\\\":\\\"games\\/2018\\/aug\\/13\\/video-games-are-political-heres-how-they-can-be-progressive\\\",\\\"type\\\":\\\"article\\\",\\\"sectionId\\\":\\\"games\\\",\\\"sectionName\\\":\\\"Games\\\",\\\"webPublicationDate\\\":\\\"2018-08-13T09:00:26Z\\\",\\\"webTitle\\\":\\\"Video games are political. Here's how they can be progressive\\\",\\\"webUrl\\\":\\\"https:\\/\\/www.theguardian.com\\/games\\/2018\\/aug\\/13\\/video-games-are-political-heres-how-they-can-be-progressive\\\",\\\"apiUrl\\\":\\\"https:\\/\\/content.guardianapis.com\\/games\\/2018\\/aug\\/13\\/video-games-are-political-heres-how-they-can-be-progressive\\\",\\\"fields\\\":{\\\"headline\\\":\\\"Video games are political. Here's how they can be progressive\\\",\\\"thumbnail\\\":\\\"https:\\/\\/media.guim.co.uk\\/be4a5464ded2f8d6c6e4e8a4d1e43456a8fd24e4\\/0_642_720_432\\/500.jpg\\\"},\\\"tags\\\":[{\\\"id\\\":\\\"profile\\/alfie-bown\\\",\\\"type\\\":\\\"contributor\\\",\\\"webTitle\\\":\\\"Alfie Bown\\\",\\\"webUrl\\\":\\\"https:\\/\\/www.theguardian.com\\/profile\\/alfie-bown\\\",\\\"apiUrl\\\":\\\"https:\\/\\/content.guardianapis.com\\/profile\\/alfie-bown\\\",\\\"references\\\":[],\\\"bio\\\":\\\"<p>Alfie Bown is the author of The Playstation Dreamworld, a philosophy of games and politics<\\/p>\\\",\\\"firstName\\\":\\\"Alfie\\\",\\\"lastName\\\":\\\"Bown\\\"}],\\\"isHosted\\\":false,\\\"pillarId\\\":\\\"pillar\\/arts\\\",\\\"pillarName\\\":\\\"Arts\\\"},{\\\"id\\\":\\\"games\\/2018\\/aug\\/10\\/fortnite-on-android-how-it-works-and-what-its-like-to-play\\\",\\\"type\\\":\\\"article\\\",\\\"sectionId\\\":\\\"games\\\",\\\"sectionName\\\":\\\"Games\\\",\\\"webPublicationDate\\\":\\\"2018-08-10T13:51:35Z\\\",\\\"webTitle\\\":\\\"Fortnite on Android: how it works and what it's like to play\\\",\\\"webUrl\\\":\\\"https:\\/\\/www.theguardian.com\\/games\\/2018\\/aug\\/10\\/fortnite-on-android-how-it-works-and-what-its-like-to-play\\\",\\\"apiUrl\\\":\\\"https:\\/\\/content.guardianapis.com\\/games\\/2018\\/aug\\/10\\/fortnite-on-android-how-it-works-and-what-its-like-to-play\\\",\\\"fields\\\":{\\\"headline\\\":\\\"Fortnite on Android: how it works and what it's like to play\\\",\\\"thumbnail\\\":\\\"https:\\/\\/media.guim.co.uk\\/210131a41170b83fcb359d743874faec429896cb\\/399_33_2172_1305\\/500.jpg\\\"},\\\"tags\\\":[{\\\"id\\\":\\\"profile\\/keithstuart\\\",\\\"type\\\":\\\"contributor\\\",\\\"webTitle\\\":\\\"Keith Stuart\\\",\\\"webUrl\\\":\\\"https:\\/\\/www.theguardian.com\\/profile\\/keithstuart\\\",\\\"apiUrl\\\":\\\"https:\\/\\/content.guardianapis.com\\/profile\\/keithstuart\\\",\\\"references\\\":[],\\\"bio\\\":\\\"<p>Keith Stuart is an author and journalist. He has written about video games, technology and digital culture for 20 years. Follow Keith on Twitter @keefstuart<\\/p>\\\",\\\"bylineImageUrl\\\":\\\"https:\\/\\/static.guim.co.uk\\/sys-images\\/Guardian\\/Pix\\/pictures\\/2014\\/4\\/17\\/1397749334580\\/KeithStuart.jpg\\\",\\\"bylineLargeImageUrl\\\":\\\"https:\\/\\/uploads.guim.co.uk\\/2017\\/10\\/06\\/Keith-Stuart,-R.png\\\",\\\"firstName\\\":\\\"\\\",\\\"lastName\\\":\\\"Stuart\\\",\\\"twitterHandle\\\":\\\"keefstuart\\\"}],\\\"isHosted\\\":false,\\\"pillarId\\\":\\\"pillar\\/arts\\\",\\\"pillarName\\\":\\\"Arts\\\"},{\\\"id\\\":\\\"games\\/2018\\/aug\\/10\\/fortnite-on-android-phones-risk-malware-infections\\\",\\\"type\\\":\\\"article\\\",\\\"sectionId\\\":\\\"games\\\",\\\"sectionName\\\":\\\"Games\\\",\\\"webPublicationDate\\\":\\\"2018-08-10T10:47:44Z\\\",\\\"webTitle\\\":\\\"Fortnite players using Android phones at risk of malware infections\\\",\\\"webUrl\\\":\\\"https:\\/\\/www.theguardian.com\\/games\\/2018\\/aug\\/10\\/fortnite-on-android-phones-risk-malware-infections\\\",\\\"apiUrl\\\":\\\"https:\\/\\/content.guardianapis.com\\/games\\/2018\\/aug\\/10\\/fortnite-on-android-phones-risk-malware-infections\\\",\\\"fields\\\":{\\\"headline\\\":\\\"Fortnite players using Android phones at risk of malware infections\\\",\\\"thumbnail\\\":\\\"https:\\/\\/media.guim.co.uk\\/b22b72fd8966ce35e2d12a4e3064eae7813b8564\\/280_0_2399_1440\\/500.jpg\\\"},\\\"tags\\\":[{\\\"id\\\":\\\"profile\\/alex-hern\\\",\\\"type\\\":\\\"contributor\\\",\\\"webTitle\\\":\\\"Alex Hern\\\",\\\"webUrl\\\":\\\"https:\\/\\/www.theguardian.com\\/profile\\/alex-hern\\\",\\\"apiUrl\\\":\\\"https:\\/\\/content.guardianapis.com\\/profile\\/alex-hern\\\",\\\"references\\\":[],\\\"bio\\\":\\\"<p>Alex Hern is a technology reporter for the Guardian.&nbsp;<\\/p><p>Follow Alex on Twitter<br>@alexhern<\\/p>\\\",\\\"bylineImageUrl\\\":\\\"https:\\/\\/uploads.guim.co.uk\\/2017\\/06\\/07\\/Alex-Hern.jpg\\\",\\\"bylineLargeImageUrl\\\":\\\"https:\\/\\/uploads.guim.co.uk\\/2017\\/10\\/06\\/Alex_Hern,_L.png\\\",\\\"firstName\\\":\\\"hern\\\",\\\"lastName\\\":\\\"alex\\\",\\\"twitterHandle\\\":\\\"alexhern\\\"}],\\\"isHosted\\\":false,\\\"pillarId\\\":\\\"pillar\\/arts\\\",\\\"pillarName\\\":\\\"Arts\\\"},{\\\"id\\\":\\\"games\\/2018\\/aug\\/08\\/super-smash-bros-ultimate-masahiro-sakurai-35-years-gaming-history-nintendo\\\",\\\"type\\\":\\\"article\\\",\\\"sectionId\\\":\\\"games\\\",\\\"sectionName\\\":\\\"Games\\\",\\\"webPublicationDate\\\":\\\"2018-08-08T13:27:37Z\\\",\\\"webTitle\\\":\\\"From Kong to Kirby: Smash Bros' Masahiro Sakurai on mashing up 35 years of gaming history\\\",\\\"webUrl\\\":\\\"https:\\/\\/www.theguardian.com\\/games\\/2018\\/aug\\/08\\/super-smash-bros-ultimate-masahiro-sakurai-35-years-gaming-history-nintendo\\\",\\\"apiUrl\\\":\\\"https:\\/\\/content.guardianapis.com\\/games\\/2018\\/aug\\/08\\/super-smash-bros-ultimate-masahiro-sakurai-35-years-gaming-history-nintendo\\\",\\\"fields\\\":{\\\"headline\\\":\\\"From Kong to Kirby: Smash Bros' Masahiro Sakurai on mashing up 35 years of gaming history\\\",\\\"thumbnail\\\":\\\"https:\\/\\/media.guim.co.uk\\/ee31ff3c3f41cc0ea7bbbb806d44ae488e52fe25\\/174_165_2146_1288\\/500.jpg\\\"},\\\"tags\\\":[{\\\"id\\\":\\\"profile\\/keza-macdonald\\\",\\\"type\\\":\\\"contributor\\\",\\\"webTitle\\\":\\\"Keza MacDonald\\\",\\\"webUrl\\\":\\\"https:\\/\\/www.theguardian.com\\/profile\\/keza-macdonald\\\",\\\"apiUrl\\\":\\\"https:\\/\\/content.guardianapis.com\\/profile\\/keza-macdonald\\\",\\\"references\\\":[],\\\"bio\\\":\\\"<p>Keza MacDonald is video games editor at the Guardian<\\/p>\\\",\\\"bylineImageUrl\\\":\\\"https:\\/\\/static.guim.co.uk\\/sys-images\\/Technology\\/Pix\\/columnists\\/2011\\/12\\/23\\/1324632607481\\/Keza-MacDonald-003.jpg\\\",\\\"firstName\\\":\\\"\\\",\\\"lastName\\\":\\\"MacDonald\\\"}],\\\"isHosted\\\":false,\\\"pillarId\\\":\\\"pillar\\/arts\\\",\\\"pillarName\\\":\\\"Arts\\\"},{\\\"id\\\":\\\"games\\/2018\\/aug\\/07\\/call-of-duty-black-ops-4-beta-can-cod-still-compete\\\",\\\"type\\\":\\\"article\\\",\\\"sectionId\\\":\\\"games\\\",\\\"sectionName\\\":\\\"Games\\\",\\\"webPublicationDate\\\":\\\"2018-08-07T11:30:46Z\\\",\\\"webTitle\\\":\\\"Call of Duty Black Ops 4 beta: can CoD still compete?\\\",\\\"webUrl\\\":\\\"https:\\/\\/www.theguardian.com\\/games\\/2018\\/aug\\/07\\/call-of-duty-black-ops-4-beta-can-cod-still-compete\\\",\\\"apiUrl\\\":\\\"https:\\/\\/content.guardianapis.com\\/games\\/2018\\/aug\\/07\\/call-of-duty-black-ops-4-beta-can-cod-still-compete\\\",\\\"fields\\\":{\\\"headline\\\":\\\"Call of Duty Black Ops 4 beta: can CoD still compete?\\\",\\\"thumbnail\\\":\\\"https:\\/\\/media.guim.co.uk\\/8436fd4f5f2dc6f9913240ba3713a5b19edf2569\\/0_0_1298_780\\/500.png\\\"},\\\"tags\\\":[{\\\"id\\\":\\\"profile\\/keithstuart\\\",\\\"type\\\":\\\"contributor\\\",\\\"webTitle\\\":\\\"Keith Stuart\\\",\\\"webUrl\\\":\\\"https:\\/\\/www.theguardian.com\\/profile\\/keithstuart\\\",\\\"apiUrl\\\":\\\"https:\\/\\/content.guardianapis.com\\/profile\\/keithstuart\\\",\\\"references\\\":[],\\\"bio\\\":\\\"<p>Keith Stuart is an author and journalist. He has written about video games, technology and digital culture for 20 years. Follow Keith on Twitter @keefstuart<\\/p>\\\",\\\"bylineImageUrl\\\":\\\"https:\\/\\/static.guim.co.uk\\/sys-images\\/Guardian\\/Pix\\/pictures\\/2014\\/4\\/17\\/1397749334580\\/KeithStuart.jpg\\\",\\\"bylineLargeImageUrl\\\":\\\"https:\\/\\/uploads.guim.co.uk\\/2017\\/10\\/06\\/Keith-Stuart,-R.png\\\",\\\"firstName\\\":\\\"\\\",\\\"lastName\\\":\\\"Stuart\\\",\\\"twitterHandle\\\":\\\"keefstuart\\\"}],\\\"isHosted\\\":false,\\\"pillarId\\\":\\\"pillar\\/arts\\\",\\\"pillarName\\\":\\\"Arts\\\"},{\\\"id\\\":\\\"games\\/2018\\/aug\\/07\\/what-video-games-in-schools-can-teach-us-about-learning\\\",\\\"type\\\":\\\"article\\\",\\\"sectionId\\\":\\\"games\\\",\\\"sectionName\\\":\\\"Games\\\",\\\"webPublicationDate\\\":\\\"2018-08-07T07:00:03Z\\\",\\\"webTitle\\\":\\\"What video games in schools can teach us about learning\\\",\\\"webUrl\\\":\\\"https:\\/\\/www.theguardian.com\\/games\\/2018\\/aug\\/07\\/what-video-games-in-schools-can-teach-us-about-learning\\\",\\\"apiUrl\\\":\\\"https:\\/\\/content.guardianapis.com\\/games\\/2018\\/aug\\/07\\/what-video-games-in-schools-can-teach-us-about-learning\\\",\\\"fields\\\":{\\\"headline\\\":\\\"What video games in schools can teach us about learning\\\",\\\"thumbnail\\\":\\\"https:\\/\\/media.guim.co.uk\\/1c869aae9683e651a9140173a2f7e0cb4227238a\\/0_80_4000_2402\\/500.jpg\\\"},\\\"tags\\\":[{\\\"id\\\":\\\"profile\\/keza-macdonald\\\",\\\"type\\\":\\\"contributor\\\",\\\"webTitle\\\":\\\"Keza MacDonald\\\",\\\"webUrl\\\":\\\"https:\\/\\/www.theguardian.com\\/profile\\/keza-macdonald\\\",\\\"apiUrl\\\":\\\"https:\\/\\/content.guardianapis.com\\/profile\\/keza-macdonald\\\",\\\"references\\\":[],\\\"bio\\\":\\\"<p>Keza MacDonald is video games editor at the Guardian<\\/p>\\\",\\\"bylineImageUrl\\\":\\\"https:\\/\\/static.guim.co.uk\\/sys-images\\/Technology\\/Pix\\/columnists\\/2011\\/12\\/23\\/1324632607481\\/Keza-MacDonald-003.jpg\\\",\\\"firstName\\\":\\\"\\\",\\\"lastName\\\":\\\"MacDonald\\\"}],\\\"isHosted\\\":false,\\\"pillarId\\\":\\\"pillar\\/arts\\\",\\\"pillarName\\\":\\\"Arts\\\"}]}}";
-
 
     /**
      * Tag for the log messages
@@ -24,14 +28,14 @@ public final class QueryUtils {
     private QueryUtils() {
     }
 
-    private static List<Article> extractResponseFromJson(String articleJSON) {
+    public static ArrayList<Article> extractResponseFromJson(String articleJSON) {
         // If the JSON string is empty or null, then return early.
         if (TextUtils.isEmpty(articleJSON)) {
             return null;
         }
 
         // Create an empty ArrayList
-        List<Article> articles = new ArrayList<>();
+        ArrayList<Article> articles = new ArrayList<>();
 
         try {
 
@@ -51,18 +55,25 @@ public final class QueryUtils {
 
                 // Extract the value for the key called "sectionName"
                 String sectionName = currentArticle.getString("sectionName");
+
                 // Extract the value for the key called "webPublicationDate"
                 String publicationDate = currentArticle.getString("webPublicationDate");
+
                 // Extract the value for the key called "webUrl"
                 String url = currentArticle.getString("webUrl");
+
                 // Extract the JSONObject key called "fields"
                 JSONObject fields = currentArticle.getJSONObject("fields");
+
                 // Extract the value for the key called "headline"
                 String articleTitle = fields.getString("headline");
+
                 // Extract the JSONArray associated with the key called "tags"
                 JSONArray tags = currentArticle.getJSONArray("tags");
+
                 // Extract the JSONObject within the tags array at the 0 index
                 JSONObject tagsObject = tags.getJSONObject(0);
+
                 // Extract the value for the key called "webTitle"
                 String authorName = tagsObject.getString("webTitle");
 
@@ -77,9 +88,7 @@ public final class QueryUtils {
 
 
         } catch (JSONException e) {
-            // If an error is thrown when executing any of the above statements in the "try" block,
-            // catch the exception here, so the app doesn't crash. Print a log message
-            // with the message from the exception.
+            // If an error is thrown catch the exception.
             Log.e("QueryUtils", "Problem parsing the news article JSON results", e);
         }
 
@@ -87,6 +96,100 @@ public final class QueryUtils {
         return articles;
     }
 
+    /**
+     * Helper method: returns new URL object from the given string URL.
+     */
+    private static URL createUrl(String stringUrl) {
+        URL url = null;
+        try {
+            url = new URL(stringUrl);
+        } catch (MalformedURLException e) {
+            Log.e(LOG_TAG, "Problem building the URL ", e);
+        }
+        return url;
+    }
+
+    /**
+     * Helper method: an HTTP request to the given URL and return a String as the response.
+     */
+    private static String makeHttpRequest(URL url) throws IOException {
+        String jsonResponse = "";
+
+        // If the URL is null, then return early.
+        if (url == null) {
+            return jsonResponse;
+        }
+
+        HttpURLConnection urlConnection = null;
+        InputStream inputStream = null;
+        try {
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setReadTimeout(10000 /* milliseconds */);
+            urlConnection.setConnectTimeout(15000 /* milliseconds */);
+            urlConnection.setRequestMethod("GET");
+            urlConnection.connect();
+
+            // If the request was successful (response code 200),
+            // then read the input stream and parse the response.
+            if (urlConnection.getResponseCode() == 200) {
+                inputStream = urlConnection.getInputStream();
+                jsonResponse = readFromStream(inputStream);
+            } else {
+                Log.e(LOG_TAG, "Error response code: " + urlConnection.getResponseCode());
+            }
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Problem retrieving the article JSON results.", e);
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+            if (inputStream != null) {
+                inputStream.close();
+            }
+        }
+        return jsonResponse;
+    }
+
+    /**
+     * Helper method: convert the {@link InputStream} into a String which contains the
+     * whole JSON response from the server.
+     */
+    private static String readFromStream(InputStream inputStream) throws IOException {
+        StringBuilder output = new StringBuilder();
+        if (inputStream != null) {
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, Charset.forName("UTF-8"));
+            BufferedReader reader = new BufferedReader(inputStreamReader);
+            String line = reader.readLine();
+            while (line != null) {
+                output.append(line);
+                line = reader.readLine();
+            }
+        }
+        return output.toString();
+    }
+
+    /**
+     * Query the Guardian API data and return a list of {@link Article} objects.
+     */
+    public static List<Article> fetchArticleData(String requestUrl) {
+        Log.i(LOG_TAG, "Grabbing article data!");
+        // Create URL object
+        URL url = createUrl(requestUrl);
+
+        // Perform HTTP request to the URL and receive a JSON response back
+        String jsonResponse = null;
+        try {
+            jsonResponse = makeHttpRequest(url);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Problem making the HTTP request.", e);
+        }
+
+        // Extract specified fields from the JSON response. Create list.
+        List<Article> articles = extractResponseFromJson(jsonResponse);
+
+        return articles;
+
+    }
 
 
 
