@@ -2,4 +2,23 @@
     <string name="app_name">News App</string>
     <string name="no_articles">No articles found</string>
     <string name="no_internet">No internet connection</string>
+    <string name="settings_menu_item">Settings</string>
+    <string name="about_menu_item">About</string>
+    <string name="settings_title">News App Settings</string>
+
+    <!-- Strings for Section Preference -->
+    <string name="settings_section_label">Section</string>
+    <string name="settings_section_key" translatable="false">section</string>
+    <string name="settings_section_default" translatable="false">@string/settings_section_business_value</string>
+    <!-- Strings for Business section option-->
+    <string name="settings_section_business_label">Business</string>
+    <string name="settings_section_business_value" translatable="false">business</string>
+    <!-- Strings for Tech section option-->
+    <string name="settings_section_technology_label">Technology</string>
+    <string name="settings_section_technology_value" translatable="false">technology</string>
+    <!-- Strings for Science section option-->
+    <string name="settings_section_science_label">Science</string>
+    <string name="settings_section_science_value" translatable="false">science</string>
+
+
 </resources>

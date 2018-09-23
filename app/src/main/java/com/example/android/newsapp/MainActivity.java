@@ -4,18 +4,22 @@ import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +33,11 @@ public class MainActivity extends AppCompatActivity
 
     /** URL for a Guardian API query **/
     private static final String GUARDIAN_REQUEST_URL =
-            "https://content.guardianapis.com/search?show-tags=contributor&show-fields=headline,thumbnail&api-key=4ad872c9-45d9-4c2b-92e0-2b9b24a77bc8";
+            "https://content.guardianapis.com/search?";
+
+    /** URL for project, used as about option **/
+    public static final String ABOUT_URL =
+            "https://github.com/talyag/NewsApp";
 
     /** Adapter for the list of articles **/
     private ArticleAdapter mAdapter;
@@ -105,7 +113,27 @@ public class MainActivity extends AppCompatActivity
     @Override
     public Loader<List<Article>> onCreateLoader (int i, Bundle bundle){
         Log.v(LOG_TAG, "onCreateLoader() has been called");
-        return new ArticleLoader(this, GUARDIAN_REQUEST_URL);
+
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        String sectionName = sharedPrefs.getString(
+                getString(R.string.settings_section_key),
+                getString(R.string.settings_section_default)
+        );
+
+        // Breaks apart the passed URI string
+        Uri baseUri = Uri.parse(GUARDIAN_REQUEST_URL);
+
+        // Prepares the parsed baseUri to accept additional query parameters
+        Uri.Builder uriBuilder = baseUri.buildUpon();
+
+        // Append query parameter and its value.
+        uriBuilder.appendQueryParameter("section", sectionName);
+        uriBuilder.appendQueryParameter("show-tags", "contributor");
+        uriBuilder.appendQueryParameter("show-fields", "headline");
+        uriBuilder.appendQueryParameter("api-key", getString(R.string.guardian_api_key));
+
+        return new ArticleLoader(this, uriBuilder.toString());
     }
 
     @Override
@@ -132,5 +160,35 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.options_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Find item Id for the option selected
+        switch (item.getItemId()) {
+
+            // If actions_settings selected, create new intent and start settings
+            case R.id.action_settings:
+                Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                startActivity(settingsIntent);
+                return true;
+
+            // If action_about selected, send intent to launch new activity and open ABOUT_URL
+            case R.id.action_about:
+                Uri helpUri = Uri.parse(ABOUT_URL);
+                Intent websiteIntent = new Intent(Intent.ACTION_VIEW, helpUri);
+                startActivity(websiteIntent);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+    }
 
 }
